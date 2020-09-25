@@ -14,10 +14,12 @@ jobs:
         uses: actions/setup-python@v2
 
       - name: Install requirements
+        id: install
         run: python3 -m pip install --no-cache-dir -r requirements.txt -r linux-requirements.txt --user
         working-directory: python
 
       - name: Run unittest
+        id: test
         run: python3 -m unittest discover -v
         working-directory: python
 
@@ -81,8 +83,7 @@ jobs:
                       type: "mrkdwn",
                       text: [
                         "*Result:*",
-                        `• ${ ${{ steps.install.outcome == 'success' }} === true ? '✅' : '❌' } Install dependencies: ${{ steps.install.outcome }}`,
-                        `• ${ ${{ steps.lint.outcome == 'success' }} === true ? '✅' : '❌' } Lint: ${{ steps.lint.outcome }}`,
+                        `• ${ ${{ steps.install.outcome == 'success' }} === true ? '✅' : '❌' } Install requirements: ${{ steps.install.outcome }}`,
                         `• ${ ${{ steps.test.outcome == 'success' }} === true ? '✅' : '❌' } Test: ${{ steps.test.outcome }}`
                       ].join('\n')
                     }

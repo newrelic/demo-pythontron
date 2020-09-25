@@ -1,0 +1,14 @@
+---
+
+- name: "Run pip install for requirements"
+  command: bash -lc "{{ python3_path.stdout }} -m pip install -r requirements.txt --target {{ deployment_path }}/{{ service_id }}/python"
+  args:
+    chdir: "{{ deployment_path }}/{{ service_id }}/python"
+
+- name: Create a lambda zip file
+  archive:
+    exclude_path:
+      "{{ deployment_path }}/{{ service_id }}/python/.git"
+    path: "{{ deployment_path }}/{{ service_id }}/python/"
+    dest: "{{ deployment_path }}/{{ service_id }}/lambda.zip"
+    format: zip

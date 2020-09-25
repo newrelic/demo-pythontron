@@ -1,0 +1,6 @@
+---
+
+- name: "Install requirements"
+  command: "{{ python3_path.stdout }} -m pip install -r requirements.txt -r linux-requirements.txt --user"
+  args:
+    chdir: "~/{{ service_id }}"

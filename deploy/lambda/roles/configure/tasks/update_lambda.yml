@@ -1,0 +1,68 @@
+---
+
+- name: Fetch lambda zip file to local
+  fetch:
+    src: "{{ deployment_path }}/{{ service_id }}/lambda.zip"
+    dest: "{{ playbook_dir }}/lambda.zip"
+    flat: yes
+
+- name: Get existing lambda fact
+  lambda_facts:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ aws_region }}"
+    query: config
+    function_name: "{{ lambda_function_name }}"
+  register: lambda_function_fact
+  delegate_to: localhost
+
+- set_fact:
+    environment_variables: "{{ (environment_variables|default({}))|combine(lambda_function_fact | json_query(query)) }}"
+  vars:
+    query: "ansible_facts.lambda_facts.function.*.environment[].variables || `{}`"
+
+- name: create an uppercase key hashtable for all variable starting with new_relic
+  set_fact:
+    upper_environment_variables: "{{ (upper_environment_variables|default({}))|combine({item.key.upper(): item.value}) }}"
+  loop: "{{ (environment_variables|default({}))|dict2items }}"
+  when: item.key.lower() is search("new_relic_")
+
+- name: get all non new_relic key environment variable
+  set_fact:
+    other_environment_variables: "{{ (other_environment_variables|default({}))|combine({item.key: item.value}) }}"
+  loop: "{{ (environment_variables|default({}))|dict2items }}"
+  when: item.key.lower() is search("new_relic_") == False
+
+- set_fact:
+    final_environment_variables: "{{
+      {\"config_file\": \"./config/app_config.json\"} 
+      }}"
+
+- set_fact:
+    final_environment_variables: "{{ 
+      final_environment_variables
+      |combine(other_environment_variables|default({}))
+      |combine(upper_environment_variables|default({}))
+      }}"
+
+- name: Update Lambda Function
+  vars:
+    zip_file_path: "{{ playbook_dir }}/lambda.zip"
+    handler_name: lambda.lambda_handler
+    memory_size: 256
+    runtime: python3.7
+    timeout: 120
+  lambda:
+    name: "{{ lambda_function_name }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ aws_region }}"
+    role: "{{ iam_role_name }}"
+    handler: "{{ handler_name }}"
+    runtime: "{{ runtime }}"
+    zip_file: "{{ zip_file_path }}"
+    timeout: "{{ timeout }}"
+    memory_size: "{{ memory_size }}"
+    environment_variables: "{{final_environment_variables | to_json | string }}"
+  register: lambda_function
+  delegate_to: localhost

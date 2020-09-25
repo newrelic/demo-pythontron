@@ -1,0 +1,23 @@
+---
+
+- fail:
+    msg: "service_id is required"
+  when: service_id is not defined
+
+- debug:
+    msg: Uploading {{ service_id }} service
+
+- name: Get python3 path
+  shell: which python3
+  register: python3_path
+
+- include_tasks: sync_service.yml
+
+- template:
+    src: deploy.config.j2
+    dest: ~/{{ service_id }}/config/app_config.json
+
+- name: Ensure config file perm allow read
+  shell: "chmod 755 ~/{{ service_id }}/config/app_config.json"
+
+- include_tasks: create_artifact_params.yml

@@ -1,0 +1,39 @@
+---
+
+- name: "Installing needed packages"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - gcc
+    - curl
+    - rsync
+    - zlib
+    - zlib-devel
+  ignore_errors: yes
+  become: yes
+  
+- name: "Installing python3 if available"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - python3
+  ignore_errors: yes
+  become: yes
+
+- name: detect any centos linux
+  stat: 
+    path: /etc/centos-release
+  register: centos_version
+
+- include_tasks: installPython3Centos.yml
+  when: centos_version.stat.exists
+
+- name: Get python3 path
+  shell: which python3
+  register: python3_path
+
+- include_tasks: installSupervisord.yml
+
+- include_tasks: configure_instance.yml

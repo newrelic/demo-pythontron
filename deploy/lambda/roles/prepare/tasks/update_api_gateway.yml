@@ -1,0 +1,17 @@
+---
+
+- template:
+    src: swagger.j2
+    dest: swagger.yml
+  delegate_to: localhost
+
+- name: Update existing API Gateway
+  aws_api_gateway:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ aws_region }}"
+    api_id: "{{ api_id }}"
+    state: present
+    stage: api
+    swagger_file: swagger.yml
+  delegate_to: localhost

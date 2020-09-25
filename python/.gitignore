@@ -1,0 +1,5 @@
+pythontron_log.*
+__pycache__
+*.pyc
+*.txt.*
+*.local

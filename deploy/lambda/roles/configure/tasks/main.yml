@@ -1,0 +1,12 @@
+---
+
+- debug:
+    msg: Creating Lambda Zip file
+
+- name: Get python3 path
+  shell: which python3
+  register: python3_path
+
+- include_tasks: create_lambda_zip.yml
+
+- include_tasks: update_lambda.yml

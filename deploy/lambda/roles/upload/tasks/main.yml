@@ -1,0 +1,23 @@
+---
+
+- name: "Create {{ service_id }} directory"
+  file:
+    path: "{{ deployment_path }}/{{ service_id }}/python"
+    state: directory
+
+- synchronize:
+    src: "{{ role_path }}/../../../../python"
+    dest: "{{ deployment_path }}/{{ service_id }}"
+
+- name: "Create {{ service_id }}/config directory"
+  file:
+    path: "{{ deployment_path }}/{{ service_id }}/python/config"
+    state: directory
+
+- name: Add app_config to config dir of copied tron
+  template:
+    src: deploy.config.j2
+    dest: "{{ deployment_path }}/{{ service_id }}/python/config/app_config.json"
+
+- name: Ensure config file perm allow read
+  shell: "chmod 755 {{ deployment_path }}/{{ service_id }}/python/config/app_config.json"

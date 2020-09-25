@@ -1,0 +1,25 @@
+---
+- debug:
+    msg: "Configuring Pythontron environment"
+
+- name: is pip installed
+  shell: python3 -m pip list | grep pip | wc -l
+  register: is_pip_installed
+
+- name: "Download PIP"
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp
+  when: is_pip_installed.stdout|int == 0
+
+- name: "Install PIP"
+  command: bash -lc "{{ python3_path.stdout }} /tmp/get-pip.py --user"
+  when: is_pip_installed.stdout|int == 0
+
+- name: "upgrade PIP trust zone"
+  command: bash -lc "{{ python3_path.stdout }} -m pip install --trusted-host pypi.python.org linkchecker --user"
+  when: is_pip_installed.stdout|int == 0
+
+- name: "upgrade PIP setuptools"
+  command: bash -lc "{{ python3_path.stdout }} -m pip install --upgrade setuptools --user"
+  when: is_pip_installed.stdout|int == 0

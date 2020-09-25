@@ -1,0 +1,43 @@
+---
+
+- name: install ssl packages
+  shell: "yum install -y openssl openssl-devel"
+  become: yes
+
+- name: detect any centos linux
+  shell: 'python3 --version | grep "ython 3." | wc -l'
+  ignore_errors: yes
+  register: python3_detected
+
+- name: groupinstall dev tools
+  shell: 'yum groupinstall -y "Development Tools"'
+  become: yes
+  when: python3_detected.stdout|int == 0
+
+- name: get python3 source
+  shell: "wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tar.xz"
+  when: python3_detected.stdout|int == 0
+
+- name: unzip python3
+  shell: "tar -xJf Python-3.6.7.tar.xz"
+  when: python3_detected.stdout|int == 0
+
+- name: run python3 configure
+  shell: './configure --with-openssl'
+  args:
+    chdir: ~/Python-3.6.7
+  when: python3_detected.stdout|int == 0
+
+- name: run python3 make
+  shell: "make"
+  args:
+    chdir: ~/Python-3.6.7
+  when: python3_detected.stdout|int == 0
+
+- name: run python3 install
+  shell: "make install"
+  args:
+    chdir: /home/{{ ansible_user }}/Python-3.6.7
+  become: yes
+  when: python3_detected.stdout|int == 0
+  ignore_errors: yes

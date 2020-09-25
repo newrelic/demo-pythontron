@@ -1,0 +1,10 @@
+---
+
+- name: "Create {{ service_id }} directory"
+  file:
+    path: ~/{{ service_id }}
+    state: directory
+
+- synchronize:
+    dest: ~/{{ service_id }}
+    src: ../../../../../python/

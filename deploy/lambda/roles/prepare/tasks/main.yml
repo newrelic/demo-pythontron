@@ -1,0 +1,51 @@
+---
+
+- name: "Installing needed packages"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - gcc
+    - curl
+    - rsync
+    - zlib
+    - zlib-devel
+    - python-pip
+  ignore_errors: yes
+  become: yes
+  
+- name: "Installing python3 if available"
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - python3
+  ignore_errors: yes
+  become: yes
+
+- name: detect any centos linux
+  stat: 
+    path: /etc/centos-release
+  register: centos_version
+
+- include_tasks: installPython3Centos.yml
+  when: centos_version.stat.exists
+
+- name: Get python3 path
+  shell: which python3
+  register: python3_path
+
+- include_tasks: configure_instance.yml
+
+- fail:
+    msg: "api_id is required"
+  when: service_id is not defined
+
+- fail:
+    msg: "lambda_uri is required"
+  when: lambda_uri is not defined
+
+- debug:
+    msg: Updating API Gateway
+
+- include_tasks: update_api_gateway.yml

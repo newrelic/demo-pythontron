@@ -13,6 +13,10 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
 
-      - name: Build with Maven
+      - name: Install requirements
+        run: python3 -m pip install --no-cache-dir -r requirements.txt -r linux-requirements.txt --user
+        working-directory: python
+
+      - name: Run unittest
         run: python3 -m unittest discover -v
         working-directory: python

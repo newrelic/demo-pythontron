@@ -73,8 +73,32 @@ Here is an example of the deploy config that can be used to deploy a pythontron 
 }
 ```
 
+#### Serverless deployment
+`demo-pythontron` can also be deployed on AWS/Lambda using the [demo-deployer](https://github.com/newrelic/demo-deployer).
+Here is an example of deploy config
 
-### Defined endpoints and purposes
+```json
+{
+  "services": [
+    {
+      "id": "python1",
+      "source_repository": "https://github.com/newrelic/demo-pythontron.git",
+      "deploy_script_path": "deploy/lambda/roles",
+      "destinations": ["lambdahost"]
+    }
+  ],
+  "resources": [
+    {
+      "id": "lambdahost",
+      "provider": "aws",
+      "type": "lambda"
+    }
+  ]
+}
+```
+
+
+### API endpoints and purposes
 
 | Endpoint               | Purpose                                                                         |
 | -----------------------| --------------------------------------------------------------------------------|

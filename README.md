@@ -2,6 +2,8 @@
 
 # demo-pythontron
 
+![Test](https://github.com/newrelic/demo-pythontron/workflows/Test/badge.svg?event=push)
+
 `demo-pythontron` is a REST application written in Python using the Flask framework. 
 
 It can be installed on a host or an AWS lambda function, and deployed with the [demo-deployer](https://github.com/newrelic/demo-deployer).

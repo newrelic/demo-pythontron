@@ -56,11 +56,14 @@ Here is an example of the deploy config that can be used to deploy a pythontron 
 {
   "services": [
     {
-      "id": "java1",
+      "id": "python1",
       "source_repository": "https://github.com/newrelic/demo-pythontron.git",
       "deploy_script_path": "deploy/linux/roles",
       "port": 5001,
-      "destinations": ["host"]
+      "destinations": ["host"],
+      "params": {
+        "delay_start_ms": 5000
+      }
     }
   ],
 
@@ -74,6 +77,9 @@ Here is an example of the deploy config that can be used to deploy a pythontron 
   ]
 }
 ```
+
+#### Params
+* delay_start_ms can be used to delay the time the service starts by this amount in milliseconds. During that interval, any incoming http request will error.
 
 #### Serverless deployment
 `demo-pythontron` can also be deployed on AWS/Lambda using the [demo-deployer](https://github.com/newrelic/demo-deployer).

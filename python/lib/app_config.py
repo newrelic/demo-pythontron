@@ -2,11 +2,13 @@ import json
 import sys
 import random
 import functools
+import time
 
 class AppConfig(object):
     def __init__(self, config_file):
         self.config_file = config_file
         self.file = None
+        self.process_start_time = time.time()
 
     def get_app_config_value(self, key):
         if self.file is None:
@@ -40,6 +42,15 @@ class AppConfig(object):
         if app_port is None:
            raise Exception('No Api port defined')
         return app_port
+
+    def get_delay_start_ms(self):
+        delay_start_ms = self.get_app_config_value('delayStartMs')
+        if delay_start_ms is None:
+           return 0
+        return delay_start_ms
+
+    def get_process_start_time(self):
+        return self.process_start_time
 
     def _parse_json_file(self):
         file_path = self.config_file

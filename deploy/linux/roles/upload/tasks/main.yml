@@ -11,6 +11,11 @@
   shell: which python3
   register: python3_path
 
+- name: defaulting delay_start_ms
+  set_fact:
+    delay_start_ms: 0
+  when: delay_start_ms is not defined
+
 - include_tasks: sync_service.yml
 
 - template:

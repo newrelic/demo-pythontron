@@ -32,6 +32,12 @@ class AppConfigTests(unittest.TestCase):
         result = app_config.get_app_port()
         self.assertEqual(result, 5000)
 
+    @patch('builtins.open', mock.mock_open(read_data='{"delayStartMs":123}'))
+    def test_get_delay_start_ms(self):
+        app_config = AppConfig(self.arguments)
+        result = app_config.get_delay_start_ms()
+        self.assertEqual(result, 123)
+
     @patch('builtins.open', mock.mock_open(read_data='{}'))
     def test_get_app_port_no_value(self):
         app_config = AppConfig(self.arguments)

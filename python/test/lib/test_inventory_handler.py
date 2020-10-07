@@ -1,5 +1,6 @@
 import unittest
 import json
+import time
 
 from mock import mock, patch
 from unittest.mock import MagicMock
@@ -17,6 +18,8 @@ class InventoryTests(unittest.TestCase):
         self.http_utils.query_service.return_value = "{}"
         self.http_utils.get_demo_http_headers.return_value = {}
         self.app_config = mock.Mock()
+        self.app_config.get_delay_start_ms.return_value = 0
+        self.app_config.get_process_start_time.return_value = time.time()
         self.result = mock.Mock()
         self.createResponseFunc = (lambda x,y,z: self.result)
         self.datastore = mock.Mock()

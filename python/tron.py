@@ -22,6 +22,12 @@ from api.behaviors_handler import BehaviorsHandler
 
 app = Flask(__name__)
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    message = "{}".format(e)
+    AppLogging.error(message)
+    return message, 500
+
 @app.route("/")
 def index():
     return get_flask_response(index.index_message())

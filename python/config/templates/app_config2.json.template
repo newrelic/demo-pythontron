@@ -1,0 +1,12 @@
+
+{
+  "id": "singletron",
+  "port": 5000,
+  "delayStartMs": 10000,
+  "dependencies": [
+    {
+      "id":"tron1",
+      "urls":["http://localhost:5001"]
+    }
+  ]
+}

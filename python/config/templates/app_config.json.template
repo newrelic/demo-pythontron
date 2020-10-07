@@ -1,5 +1,6 @@
 {
-  "id" : "app.template",
-  "port": 5000,
+  "id" : "tron1",
+  "port": 5001,
+  "delayStartMs": 10000,
   "dependencies": []
 }

@@ -2,6 +2,7 @@ import json
 from lib.tron_response import TronResponse
 from lib.app_logging import AppLogging
 from lib.behavior_actions import handle_behaviors_pre, handle_behaviors_post
+from .base_handler import BaseHandler
 
 class InventoryHandler(object):
     def __init__(self, app_config, datastore, http_utils, behavior_repository, createResponseFunc = None):
@@ -14,6 +15,7 @@ class InventoryHandler(object):
             self.createResponseFunc = (lambda x,y,z: TronResponse.createResponse(x,y,z))
 
     def get_inventory(self):
+        BaseHandler(self.app_config).ensure_app_is_started()
         AppLogging.info("get_inventory")
         handle_behaviors_pre(self.behavior_repository, self.http_utils.get_demo_http_headers())
 
@@ -32,6 +34,7 @@ class InventoryHandler(object):
         return tron_response
 
     def get_inventory_item(self, item_id):
+        BaseHandler(self.app_config).ensure_app_is_started()
         AppLogging.info("get_inventory/" + item_id)
         handle_behaviors_pre(self.behavior_repository, self.http_utils.get_demo_http_headers())
 

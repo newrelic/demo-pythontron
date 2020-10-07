@@ -1,5 +1,10 @@
 ---
 
+- name: defaulting delay_start_ms
+  set_fact:
+    delay_start_ms: 0
+  when: delay_start_ms is not defined
+
 - name: "Create {{ service_id }} directory"
   file:
     path: "{{ deployment_path }}/{{ service_id }}/python"

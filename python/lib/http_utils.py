@@ -17,7 +17,10 @@ class HttpUtils(object):
 
     def query_service(self, url):
         headers = self.get_demo_http_headers()
-        response = self.get_request(url, None, headers)
+        try:
+            response = self.get_request(url, None, headers)
+        except:
+            raise Exception("An error occurred during a downstream request to {}".format(url))
         return response
 
     def get_request(self, URL, PARAMS, HEADERS=None):

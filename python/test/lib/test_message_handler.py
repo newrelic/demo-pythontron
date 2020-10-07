@@ -1,5 +1,6 @@
 import unittest
 import json
+import time
 
 from mock import mock, patch
 from unittest.mock import MagicMock
@@ -14,6 +15,8 @@ class MessageTests(unittest.TestCase):
         self.http_utils = mock.Mock()
         self.http_utils.get_demo_http_headers.return_value = {}
         self.app_config = mock.Mock()
+        self.app_config.get_delay_start_ms.return_value = 0
+        self.app_config.get_process_start_time.return_value = time.time()
         self.result = mock.Mock()
         self.createResponseFunc = (lambda x,y,z: self.result)
         self.message = MessageHandler(self.app_config, self.http_utils, repository.Repository(["SOMETHING"]), self.createResponseFunc)

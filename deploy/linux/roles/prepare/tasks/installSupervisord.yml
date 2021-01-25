@@ -7,7 +7,7 @@
       state: installed
     ignore_errors: yes
     become: yes
-    
+
   - name: check if pip is already installed
     shell: whereis pip | grep "bin/pip" | wc -l
     register: pip_installed
@@ -22,10 +22,10 @@
     become: yes
     when: pip_installed.stdout|int == 1 and pip_local.stdout|int == 0
   - name: Installing latest pip - fetch
-    shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    shell: curl https://bootstrap.pypa.io/2.7/get-pip.py -o get-pip.py
     when: (pip_installed.stdout|int == 0) or (pip_installed.stdout|int == 1 and pip_local.stdout|int == 0)
   - name: Installing pip
-    shell: python get-pip.py --force-reinstall
+    shell: python get-pip.py "pip < 21.0" --force-reinstall
     become: yes
     when: (pip_installed.stdout|int == 0) or (pip_installed.stdout|int == 1 and pip_local.stdout|int == 0)
 
@@ -78,8 +78,8 @@
     replace:
       dest: /etc/init.d/supervisord
       regexp: '/usr/local/bin'
-      replace: '/usr/bin'  
-    when: localbinsupervisordfile.stat.exists == False  
+      replace: '/usr/bin'
+    when: localbinsupervisordfile.stat.exists == False
     become: yes
 
   - name: install superlance for memory restart

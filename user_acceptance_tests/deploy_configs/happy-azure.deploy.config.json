@@ -1,0 +1,24 @@
+{
+    "services": [
+        {
+            "id": "python1",
+            "local_source_path": "demo-pythontron",
+            "deploy_script_path": "deploy/linux/roles",
+            "port": 5001,
+            "destinations": [
+                "host"
+            ],
+            "params": {
+                "delay_start_ms": 5000
+            }
+        }
+    ],
+    "resources": [
+        {
+            "id": "host",
+            "provider": "azure",
+            "type": "vm",
+            "size": "Standard_B1s"
+        }
+    ]
+}

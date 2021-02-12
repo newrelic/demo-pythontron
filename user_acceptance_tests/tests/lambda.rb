@@ -25,11 +25,6 @@ describe 'Deployment Tests' do
     expect(response.code).must_equal(200)
   end
 
-  it 'GET /api/behaviors should return HTTP 200 OK' do
-    response = RestClient.get("#{service_url}/api/behaviors")
-    expect(response.code).must_equal(200)
-  end
-
   it 'GET /api/help should return HTTP 200 OK' do
     response = RestClient.get("#{service_url}/api/help")
     expect(response.code).must_equal(200)

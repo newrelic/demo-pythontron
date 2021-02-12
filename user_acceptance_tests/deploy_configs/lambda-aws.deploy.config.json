@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "id": "python1",
+            "source_repository": "https://github.com/newrelic/demo-pythontron.git",
+            "deploy_script_path": "deploy/lambda/roles",
+            "destinations": [
+                "lambdahost"
+            ]
+        }
+    ],
+    "resources": [
+        {
+            "id": "lambdahost",
+            "provider": "aws",
+            "type": "lambda"
+        }
+    ],
+    "instrumentations": {}
+}

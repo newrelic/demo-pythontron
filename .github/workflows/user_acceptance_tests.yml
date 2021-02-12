@@ -19,14 +19,24 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
       
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "./user_acceptance_tests/deploy_configs/${{ matrix.scenario }}-${{ matrix.cloud_provider }}.deploy.config.json"
+
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.7
 
       - name: pull v3 deployer image
+        id: docker_pull
+        if: steps.check_files.outputs.files_exists == 'true'
         run: docker pull ghcr.io/newrelic/deployer:latest
 
       - name: general setup
+        id: general_setup
+        if: steps.check_files.outputs.files_exists == 'true'
         env:
           USER_CONFIG: ${{ secrets.UAT_USER_CONFIG }}
         run: |
@@ -39,6 +49,7 @@ jobs:
           bundle install --gemfile=user_acceptance_tests/tests/Gemfile
 
       - name: aws setup
+        if: steps.general_setup.outcome == 'success'
         env:
           PEM_KEY: ${{ secrets.PEM_KEY }}
         run: |
@@ -46,6 +57,7 @@ jobs:
           chmod 400 configs/uat-ca.pem
 
       - name: azure setup
+        if: steps.general_setup.outcome == 'success'
         env:
           ID_RSA_PUB: ${{ secrets.UAT_AZURE_ID_RSA_PUB_FILE }}
           ID_RSA: ${{ secrets.UAT_AZURE_ID_RSA_FILE }}
@@ -54,6 +66,7 @@ jobs:
           mv $HOME/.ssh configs
 
       - name: gcp setup
+        if: steps.general_setup.outcome == 'success'
         env:
           UAT_GCP_PEM_FILE: ${{ secrets.UAT_GCP_PEM_FILE }}
           UAT_GCP_SERVICEACCOUNT_FILE: ${{ secrets.UAT_GCP_SERVICEACCOUNT_FILE }}
@@ -63,10 +76,12 @@ jobs:
           echo "$UAT_GCP_SERVICEACCOUNT_FILE" > $GITHUB_WORKSPACE/configs/demo-newrelic-staging-gcp-service-account.json
 
       - name: debug ls - configs
+        if: steps.general_setup.outcome == 'success'
         run: ls $GITHUB_WORKSPACE/configs
 
       - name: run deployment
         id: deployment
+        if: steps.docker_pull.outcome == 'success'
         run: |
           docker run -t \
           -v $GITHUB_WORKSPACE/$TRON_FOLDER:/mnt/deployer/$TRON_FOLDER \
@@ -77,17 +92,19 @@ jobs:
           -o /tmp/output.json
 
       - name: debug ls - tmp
+        if: steps.general_setup.outcome == 'success'
         run: |
           ls tmp
 
       - name: run tests
         id: test
+        if: steps.deployment.outcome == 'success'
         run: ruby ./user_acceptance_tests/tests/${{ matrix.scenario }}.rb
         env:
           TEST_INPUT_FILE_LOCATION: tmp/output.json
 
       - name: run teardown
-        if: always()
+        if: always() && steps.deployment.outcome != 'skipped'
         run: |
           docker run -t \
           -v $GITHUB_WORKSPACE/$TRON_FOLDER:/mnt/deployer/$TRON_FOLDER \

@@ -1,0 +1,50 @@
+{
+  "services": [
+    {
+      "id": "staticapi",
+      "display_name": "Static API",
+        "local_source_path": "/mnt/demotron/demo-pythontron",
+      "deploy_script_path": "deploy/lambda/roles",
+      "destinations": ["lambdahost"]
+    }
+  ],
+
+  "global_tags": {
+    "dxOwningTeam": "DEMO",
+    "dxEnvironment": "development",
+    "dxDepartment": "product",
+    "dxProduct": "V3",
+    "dxDeployedBy": "Alec"
+  },
+
+  "resources": [
+    {
+      "id": "lambdahost",
+      "provider": "aws",
+      "type": "lambda"
+    }
+  ],
+
+  "instrumentations": {
+    "resources": [
+      {
+        "id": "nr_lambda",
+        "resource_ids": ["lambdahost"],
+        "provider": "newrelic",
+        "source_repository": "https://github.com/newrelic/demo-newrelic-instrumentation.git",
+        "deploy_script_path": "deploy/lambda_monitoring/roles",
+        "version": "5.16.2.147"
+      }
+    ],
+    "services": [
+      {
+        "id": "nr_lambda_python",
+        "service_ids": ["staticapi"],
+        "provider": "newrelic",
+        "source_repository": "https://github.com/newrelic/demo-newrelic-instrumentation.git",
+        "deploy_script_path": "deploy/python/lambda/roles",
+        "version": "5.16.2.147"
+      }
+    ]
+  }
+}

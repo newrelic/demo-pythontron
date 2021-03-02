@@ -7,7 +7,7 @@ This is a small branch of the larger demo-pythontron that serves static content 
 This application can be deployed using the [demo-deployer](https://github.com/newrelic/demo-deployer).
 
 ``` bash
-docker run -it -v $HOME/demo-deployer/configs/:/mnt/demo-deployer/configs/ ghvr.io/newrelic/deployer -d https://raw.githubusercontent.com/newrelic/demo-pythontron/main/static-api.json
+docker run -it -v $HOME/demo-deployer/configs/:/mnt/demo-deployer/configs/ ghvr.io/newrelic/deployer -d https://raw.githubusercontent.com/newrelic/demo-pythontron/nerdpack-course-static-api/static-api.json
 ```
 
 ## Endpoints

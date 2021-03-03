@@ -1,30 +1,4 @@
 {
-    "instrumentations": {
-        "services": [
-            {
-                "version": "5.16.2.147",
-                "deploy_script_path": "deploy/python/lambda/roles",
-                "source_repository": "https://github.com/newrelic/demo-newrelic-instrumentation.git",
-                "provider": "newrelic",
-                "service_ids": [
-                    "staticapi"
-                ],
-                "id": "nr_lambda_python"
-            }
-        ],
-        "resources": [
-            {
-                "version": "5.16.2.147",
-                "deploy_script_path": "deploy/lambda_monitoring/roles",
-                "source_repository": "https://github.com/newrelic/demo-newrelic-instrumentation.git",
-                "provider": "newrelic",
-                "resource_ids": [
-                    "lambdahost"
-                ],
-                "id": "nr_lambda"
-            }
-        ]
-    },
     "resources": [
         {
             "type": "lambda",
@@ -37,7 +11,7 @@
         "dxProduct": "V3",
         "dxDepartment": "product",
         "dxEnvironment": "development",
-        "dxOwningTeam": "DEMO"
+        "dxOwningTeam": "Demotron"
     },
     "services": [
         {

@@ -2,6 +2,7 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require 'rest-client'
 require 'json'
+require 'retriable'
 
 describe 'Deployment Tests' do
   let(:service_url) do
@@ -10,6 +11,11 @@ describe 'Deployment Tests' do
     )
   end
 
+  before do
+    self.class.wait_for_api(service_url)
+  end
+
+  # endpoints are the same as in the happy test, just that under the hood we should be using database
   it 'GET /api/inventory should return HTTP 200 OK' do
     response = RestClient.get("#{service_url}/api/inventory")
     expect(response.code).must_equal(200)
@@ -17,16 +23,6 @@ describe 'Deployment Tests' do
 
   it 'GET /api/inventory/1 should return HTTP 200 OK' do
     response = RestClient.get("#{service_url}/api/inventory/1")
-    expect(response.code).must_equal(200)
-  end
-
-  it 'GET /api/validateMessage should return HTTP 200 OK' do
-    response = RestClient.get("#{service_url}/api/validateMessage")
-    expect(response.code).must_equal(200)
-  end
-
-  it 'GET /api/help should return HTTP 200 OK' do
-    response = RestClient.get("#{service_url}/api/help")
     expect(response.code).must_equal(200)
   end
 
@@ -60,6 +56,18 @@ describe 'Deployment Tests' do
       exit(1)
     else
       service_url
+    end
+  end
+
+  def self.wait_for_api(service_url)
+    if @before_flag.nil?
+      @before_flag = true
+
+      # this will retry 5 additional times after the initial attempt, at each interval represented in seconds. maximum total wait time is 16 seconds.
+      Retriable.retriable(intervals: [1, 2, 4, 8, 16]) do
+        response = RestClient.get("#{service_url}/api/inventory")
+        raise Exception unless response.code == 200
+      end
     end
   end
 end

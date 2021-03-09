@@ -1,8 +1,7 @@
 import json
-import sys
 import random
-import functools
 import time
+
 
 class AppConfig(object):
     def __init__(self, config_file):
@@ -51,6 +50,12 @@ class AppConfig(object):
 
     def get_process_start_time(self):
         return self.process_start_time
+
+    def asdict(self):
+        if self.file is None:
+            self.file = self._parse_json_file()
+
+        return self.file if self.file != None else {}
 
     def _parse_json_file(self):
         file_path = self.config_file

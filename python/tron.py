@@ -8,7 +8,6 @@ from dependency_injection_container import (Container,
                                             inventory_repository_selector)
 from lib.app_logging import AppLogging
 from lib.tron_response import TronResponse
-from repository import setup_database
 
 app = Flask(__name__)
 
@@ -84,14 +83,14 @@ if __name__ == "__main__":
     app_config = container.app_config()
 
     container.config.from_dict(app_config.asdict())
-    container.wire(modules=[setup_database, sys.modules[__name__]])
+    container.wire(modules=[sys.modules[__name__]])
 
     arguments = container.arguments()
 
     AppLogging.init(arguments.logging_level)
 
     if inventory_repository_selector() == 'database':
-        setup_database.execute()
+        container.setup_database_action().execute()
 
     database_connector = container.database_connector()
     http_utils = container.http_utils()

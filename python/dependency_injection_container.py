@@ -17,6 +17,7 @@ from repository.database_inventory_repository import \
     DatabaseInventoryRepository
 from repository.file_inventory_repository import FileInventoryRepository
 from repository.mysql_connector import MySqlConnector
+from repository.setup_database_action import SetupDatabaseAction
 
 
 def inventory_repository_selector():
@@ -82,6 +83,13 @@ class Container(containers.DeclarativeContainer):
     database_inventory_repository = providers.Singleton(
         DatabaseInventoryRepository,
         database_connector=database_connector
+    )
+    
+    setup_database_action = providers.Factory(
+        SetupDatabaseAction,
+        database_connector=database_connector,
+        database_connection_info=database_connection_info,
+        inventory_data=inventory_data
     )
 
     file_inventory_repository = providers.Singleton(

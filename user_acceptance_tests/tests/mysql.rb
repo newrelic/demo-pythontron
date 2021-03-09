@@ -15,7 +15,6 @@ describe 'Deployment Tests' do
     self.class.wait_for_api(service_url)
   end
 
-  # endpoints are the same as in the happy test, just that under the hood we should be using database
   it 'GET /api/inventory should return HTTP 200 OK' do
     response = RestClient.get("#{service_url}/api/inventory")
     expect(response.code).must_equal(200)
@@ -23,6 +22,11 @@ describe 'Deployment Tests' do
 
   it 'GET /api/inventory/1 should return HTTP 200 OK' do
     response = RestClient.get("#{service_url}/api/inventory/1")
+    expect(response.code).must_equal(200)
+  end
+
+  it 'GET /api/database/health' do
+    response = RestClient.get("#{service_url}/api/database/health")
     expect(response.code).must_equal(200)
   end
 

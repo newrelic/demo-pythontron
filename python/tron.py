@@ -4,8 +4,10 @@ import sys
 from flask import Flask, Response
 
 from api.help import help_message
-from dependency_injection_container import Container, inventory_repository_selector
+from dependency_injection_container import (Container,
+                                            inventory_repository_selector)
 from lib.app_logging import AppLogging
+from lib.tron_response import TronResponse
 from repository import setup_database
 
 app = Flask(__name__)
@@ -53,6 +55,14 @@ def inventory_item(item_id):
     return get_flask_response(inventory.get_inventory_item(item_id))
 
 
+@app.route("/api/database/health")
+def database_health_check():
+    is_connected = database_connector.connect().is_connected()
+    status_code = 200 if is_connected else 500
+    
+    return get_flask_response(TronResponse(status_code=status_code))
+
+
 @app.after_request
 def add_headers(response):
     return http_utils.add_response_headers(response)
@@ -83,6 +93,7 @@ if __name__ == "__main__":
     if inventory_repository_selector() == 'database':
         setup_database.execute()
 
+    database_connector = container.database_connector()
     http_utils = container.http_utils()
     inventory = container.inventory_handler()
     message = container.message_handler()

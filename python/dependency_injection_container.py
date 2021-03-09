@@ -43,6 +43,10 @@ def get_inventory_data():
 
 
 class Container(containers.DeclarativeContainer):
+    """
+    A class whose responsibility is instantiating, and resolving dependencies.
+    """
+    
     config = providers.Configuration()
 
     arguments = providers.Object(

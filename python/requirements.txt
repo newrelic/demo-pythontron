@@ -1,4 +1,4 @@
-# development?
+# lambda requirements
 
 requests==2.16.0
 jsonschema==3.0.0

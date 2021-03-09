@@ -1,4 +1,4 @@
-# prod?
+# compute resource -- ec2, etc
 
 Flask==1.0.2
 Flask-RESTful==0.3.7

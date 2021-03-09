@@ -6,3 +6,4 @@ gunicorn==19.9.0
 mock==2.0.0
 dependency-injector==4.23.2
 mysql-connector-python==8.0.23
+dataclasses==0.6

@@ -24,11 +24,11 @@ def inventory_repository_selector():
     app_config = container.app_config()
 
     database_options = app_config.get_app_config_value('database')
-    option_values = [database_options.get(i, None) for i in [
+    option_values = [database_options.get(i, '') for i in [
         'user', 'password', 'host', 'port', 'database']]
 
     # false if there exists an option with no value, true if all options have values
-    use_database = not(None in option_values)
+    use_database = not('' in option_values)
 
     selection = "database" if use_database else "file"
 

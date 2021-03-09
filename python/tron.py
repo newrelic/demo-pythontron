@@ -4,10 +4,10 @@ import sys
 from flask import Flask, Response
 
 from api.help import help_message
-from dependency_injection_container import (Container,
-                                            inventory_repository_selector)
+from dependency_injection_container import Container
 from lib.app_logging import AppLogging
 from lib.tron_response import TronResponse
+from repository.helpers import inventory_repository_selector
 
 app = Flask(__name__)
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     AppLogging.init(arguments.logging_level)
 
-    if inventory_repository_selector() == 'database':
+    if inventory_repository_selector(app_config) == 'database':
         container.setup_database_action().execute()
 
     database_connector = container.database_connector()

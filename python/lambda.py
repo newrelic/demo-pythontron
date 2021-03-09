@@ -1,57 +1,22 @@
-import json
 import os
 
 from api.help import help_message
 from api.index_handler import IndexHandler
 from api.inventory_handler import InventoryHandler
 from api.message_handler import MessageHandler
+from data.inventory import get_inventory_data
 from lib.app_config import AppConfig
 from lib.app_logging import AppLogging
 from lib.behaviors.repository import Repository
 from lib.http_utils import HttpUtils
 from lib.tron_response import TronResponse
-from lib.validate.configuration import Configuration
 from repository.database_connection_info import DatabaseConnectionInfo
 from repository.database_inventory_repository import \
     DatabaseInventoryRepository
 from repository.file_inventory_repository import FileInventoryRepository
+from repository.helpers import inventory_repository_selector
 from repository.mysql_connector import MySqlConnector
 from repository.setup_database_action import SetupDatabaseAction
-
-
-def get_config_file_path(arguments):
-    # look at environment variable first for lambda deployment. if doesn't exist, use argument -- for ec2 instance deployment.
-    config_file_path = os.environ.get('config_file', '')
-    print(f"value of config file: {config_file_path}")
-
-    if config_file_path == '':
-        config_file_path = arguments.config_file
-
-    print(f"new value of config file: {config_file_path}")
-
-    Configuration(config_file_path).validate_config()
-
-    return config_file_path
-
-
-def inventory_repository_selector(app_config):
-    database_options = app_config.get_app_config_value('database')
-    option_values = [database_options.get(i, '') for i in [
-        'user', 'password', 'host', 'port', 'database']]
-
-    # false if there exists an option with no value, true if all options have values
-    use_database = not('' in option_values)
-
-    selection = "database" if use_database else "file"
-
-    print(f"Using inventory repository type: {selection}")
-
-    return selection
-
-
-def get_inventory_data():
-    with open('data/inventory.json') as f:
-        return json.load(f)
 
 
 def get_lambda_reponse(tron_response):

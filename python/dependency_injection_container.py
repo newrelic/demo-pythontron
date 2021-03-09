@@ -1,5 +1,3 @@
-import json
-
 from dependency_injector import containers, providers
 from flask.globals import request
 
@@ -7,6 +5,7 @@ from api.behaviors_handler import BehaviorsHandler
 from api.index_handler import IndexHandler
 from api.inventory_handler import InventoryHandler
 from api.message_handler import MessageHandler
+from data.inventory import get_inventory_data
 from lib.app_config import AppConfig
 from lib.behaviors.repository import Repository
 from lib.cli_parser import CliParser
@@ -16,31 +15,9 @@ from repository.database_connection_info import DatabaseConnectionInfo
 from repository.database_inventory_repository import \
     DatabaseInventoryRepository
 from repository.file_inventory_repository import FileInventoryRepository
+from repository.helpers import inventory_repository_selector
 from repository.mysql_connector import MySqlConnector
 from repository.setup_database_action import SetupDatabaseAction
-
-
-def inventory_repository_selector():
-    container = Container()
-    app_config = container.app_config()
-
-    database_options = app_config.get_app_config_value('database')
-    option_values = [database_options.get(i, '') for i in [
-        'user', 'password', 'host', 'port', 'database']]
-
-    # false if there exists an option with no value, true if all options have values
-    use_database = not('' in option_values)
-
-    selection = "database" if use_database else "file"
-
-    print(f"Using inventory repository type: {selection}")
-
-    return selection
-
-
-def get_inventory_data():
-    with open('data/inventory.json') as f:
-        return json.load(f)
 
 
 class Container(containers.DeclarativeContainer):

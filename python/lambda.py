@@ -40,7 +40,7 @@ def lambda_handler(event, context):
         password=config['database']['password'],
         host=config['database']['host'],
         port=config['database']['port'],
-        database=config['database']['database']
+        database=config['database']['name']
     )
 
     database_connector = MySqlConnector(

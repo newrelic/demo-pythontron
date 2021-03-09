@@ -49,7 +49,7 @@ class Container(containers.DeclarativeContainer):
         password=config.database.password,
         host=config.database.host,
         port=config.database.port,
-        database=config.database.database
+        database=config.database.name
     )
 
     database_connector = providers.Factory(

@@ -1,4 +1,5 @@
 import mysql.connector
+from lib.app_logging import AppLogging
 from mysql.connector import errorcode
 
 from repository.database_connection_info import DatabaseConnectionInfo
@@ -23,8 +24,8 @@ class MySqlConnector(IDatabaseConnector):
             return self.__connection
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Something is wrong with your user name or password")
+                AppLogging.error("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                print("Database does not exist")
+                AppLogging.error("Database does not exist")
             else:
-                print(err)
+                AppLogging.error(err)

@@ -1,3 +1,6 @@
+from lib.app_logging import AppLogging
+
+
 def inventory_repository_selector(app_config = None):
     if app_config == None:
         from dependency_injection_container import Container
@@ -11,6 +14,6 @@ def inventory_repository_selector(app_config = None):
 
     selection = "database" if use_database else "file"
 
-    print(f"Using inventory repository type: {selection}")
+    AppLogging.info(f"Using inventory repository type: {selection}")
 
     return selection

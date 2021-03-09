@@ -3,5 +3,12 @@
   "port" : {{ service_port }},
   "delayStartMs": {{ delay_start_ms }},
   "dependencies":
-  {{ dependencies | to_json }}
+  {{ dependencies | to_json }},
+  "database": {
+    "user": "{{ database_user | default(None) }}",
+    "password": "{{ database_password | default(None) }}",
+    "host": "{{ database_host | default(None) }}",
+    "port": "{{ database_port | default(None) }}",
+    "name": "{{ service_id }}"
+  }
 }

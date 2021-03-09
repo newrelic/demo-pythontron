@@ -1,8 +1,9 @@
 import json
 
+from repository.i_inventory_repository import IInventoryRepository
 
-class DataStore(object):
-    
+
+class FileInventoryRepository(IInventoryRepository):
     def get_records(self):
         file_path = "data/inventory.json"
         with open(file_path) as json_file:
@@ -16,7 +17,7 @@ class DataStore(object):
             return item
         else:
             return {}
-    
+
     @classmethod
     def _find_by_key(obj, json_object, key_name, key_value):
         for item in json_object:

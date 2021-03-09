@@ -1,14 +1,15 @@
-import unittest
 import json
 import time
-
-from mock import mock, patch
+import unittest
 from unittest.mock import MagicMock
+
 from api.inventory_handler import InventoryHandler
-from lib.datastore import DataStore
 from flask import request
+from mock import mock, patch
+
 from lib.app_logging import AppLogging
-from lib.behaviors import repository, behavior
+from lib.behaviors import behavior, repository
+
 
 class InventoryTests(unittest.TestCase):
 

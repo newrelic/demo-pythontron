@@ -1,2 +1,5 @@
+# lambda requirements
+
 requests==2.16.0
 jsonschema==3.0.0
+mysql-connector-python==8.0.23

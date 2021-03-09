@@ -1,0 +1,41 @@
+{
+    "services": [
+        {
+            "id": "mysql",
+            "source_repository": "https://github.com/newrelic/demo-services.git",
+            "deploy_script_path": "deploy/mariadb/linux/roles",
+            "port": 6002,
+            "destinations": [
+                "host"
+            ],
+            "params": {
+                "database_user": "demotron",
+                "database_password": "[credential:secrets:database_password]",
+                "database_root_password": "[credential:secrets:database_root_password]"
+            }
+        },
+        {
+            "id": "python1",
+            "local_source_path": "demo-pythontron",
+            "deploy_script_path": "deploy/linux/roles",
+            "port": 6001,
+            "destinations": [
+                "host"
+            ],
+            "params": {
+                "database_user": "[service:mysql:params:database_user]",
+                "database_password": "[credential:secrets:database_password]",
+                "database_host": "[resource:host:ip]",
+                "database_port": "[service:mysql:port]"
+            }
+        }
+    ],
+    "resources": [
+        {
+            "id": "host",
+            "provider": "azure",
+            "type": "vm",
+            "size": "Standard_B1s"
+        }
+    ]
+}

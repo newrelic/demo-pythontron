@@ -118,6 +118,7 @@ Here is an example of deploy config
 | /api/inventory/{item_id}   | Fetch a single JSON inventory item by its id      |
 | /api/validateMessage?message=<message>  | Returns true for validation of message |
 | /api/help                  | Return api usage       |
+| /api/database/health       | Returns HTTP-200 if database is connected, HTTP-500 otherwise |
 
 
 ## Setup and Installation of Pythontron

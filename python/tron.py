@@ -59,8 +59,11 @@ def add_headers(response):
 
 
 def get_flask_response(tron_response):
-    response = Response(tron_response.get_body(
-    ), status=tron_response.get_status_code(), mimetype='application/json')
+    response = Response(
+        tron_response.get_body(), 
+        status=tron_response.get_status_code(), 
+        mimetype='application/json'
+    )
     for k, v in tron_response.get_headers().items():
         response.headers[k] = v
     return response
@@ -77,6 +80,9 @@ if __name__ == "__main__":
 
     AppLogging.init(arguments.logging_level)
 
+    if inventory_repository_selector() == 'database':
+        setup_database.execute()
+
     http_utils = container.http_utils()
     inventory = container.inventory_handler()
     message = container.message_handler()
@@ -92,8 +98,4 @@ if __name__ == "__main__":
     AppLogging.info("Listening on port: " + str(port))
     AppLogging.info(index.get_message())
 
-    if inventory_repository_selector() == 'database':
-        setup_database.execute()
-
-    app.run(use_debugger=True, use_reloader=False,
-            threaded=True, host='0.0.0.0', port=port)
+    app.run(use_debugger=True, use_reloader=False, threaded=True, host='0.0.0.0', port=port)

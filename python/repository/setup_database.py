@@ -4,23 +4,21 @@ import mysql.connector
 from dependency_injection_container import Container
 from dependency_injector.wiring import Provide, inject
 from mysql.connector import errorcode
+from repository.database_connection_info import DatabaseConnectionInfo
 
-from repository.i_database_connection import IDatabaseConnection
+from repository.i_database_connector import IDatabaseConnector
 
 
 @inject
-def execute(database_connection: IDatabaseConnection = Provide[Container.database_connection],
-            database_connection_info=Provide[Container.database_connection_info],
-            inventory_data=Provide[Container.inventory_data]):
-
-    print(database_connection_info)
-    print(inventory_data)
+def execute(database_connector: IDatabaseConnector = Provide[Container.database_connector],
+            database_connection_info: DatabaseConnectionInfo = Provide[Container.database_connection_info],
+            inventory_data = Provide[Container.inventory_data]):
 
     DB_NAME = database_connection_info.database
     # remove this since we dont know if database exists yet.
     database_connection_info.database = None
 
-    cnx = database_connection.connect(**database_connection_info.asdict())
+    cnx = database_connector.connect(**database_connection_info.asdict())
     cursor = cnx.cursor()
 
     def create_database(cursor):

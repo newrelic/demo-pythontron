@@ -16,7 +16,7 @@ from repository.database_connection_info import DatabaseConnectionInfo
 from repository.database_inventory_repository import \
     DatabaseInventoryRepository
 from repository.file_inventory_repository import FileInventoryRepository
-from repository.mysql_connection import MySqlConnection
+from repository.mysql_connector import MySqlConnector
 
 
 def inventory_repository_selector():
@@ -25,7 +25,7 @@ def inventory_repository_selector():
 
     database_options = app_config.get_app_config_value('database')
     option_values = [database_options.get(i, None) for i in [
-        'username', 'password', 'host', 'port', 'database']]
+        'user', 'password', 'host', 'port', 'database']]
 
     # false if there exists an option with no value, true if all options have values
     use_database = not(None in option_values)
@@ -58,7 +58,8 @@ class Container(containers.DeclarativeContainer):
 
     app_config = providers.Singleton(
         AppConfig,
-        config_file=config_file)
+        config_file=config_file
+    )
 
     database_connection_info = providers.Factory(
         DatabaseConnectionInfo,
@@ -69,14 +70,14 @@ class Container(containers.DeclarativeContainer):
         database=config.database.database
     )
 
-    database_connection = providers.Factory(
-        MySqlConnection,
+    database_connector = providers.Factory(
+        MySqlConnector,
         connection_info=database_connection_info
     )
 
     database_inventory_repository = providers.Singleton(
         DatabaseInventoryRepository,
-        database_connection=database_connection
+        database_connector=database_connector
     )
 
     file_inventory_repository = providers.Singleton(
@@ -103,7 +104,7 @@ class Container(containers.DeclarativeContainer):
         InventoryHandler,
         app_config=app_config,
         datastore=inventory_repository,
-        https_utils=http_utils,
+        http_utils=http_utils,
         behavior_repository=behavior_repository
     )
     

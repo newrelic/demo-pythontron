@@ -2,9 +2,10 @@ import mysql.connector
 from mysql.connector import errorcode
 
 from repository.database_connection_info import DatabaseConnectionInfo
+from repository.i_database_connector import IDatabaseConnector
 
 
-class MySqlConnection:
+class MySqlConnector(IDatabaseConnector):
     def __init__(self, connection_info: DatabaseConnectionInfo) -> None:
         self.__connectin_info = connection_info
         self.__connection = None
@@ -15,6 +16,7 @@ class MySqlConnection:
                 # if options are provided, dont use default options
                 connect_options = kwargs if len(
                     kwargs) > 0 else self.__connectin_info.asdict()
+
                 self.__connection = mysql.connector.connect(
                     **connect_options)
 
@@ -26,9 +28,3 @@ class MySqlConnection:
                 print("Database does not exist")
             else:
                 print(err)
-        else:
-            self.__connection.close()
-
-    def close(self):
-        self.__connection.close()
-        self.__connection = None

@@ -1,17 +1,11 @@
 import os
 import sys
 
-from flask import Flask, Response, request
+from flask import Flask, Response
 
-from api.behaviors_handler import BehaviorsHandler
 from api.help import help_message
-from api.index_handler import IndexHandler
-from api.inventory_handler import InventoryHandler
-from api.message_handler import MessageHandler
-from dependency_injection_container import Container
+from dependency_injection_container import Container, inventory_repository_selector
 from lib.app_logging import AppLogging
-from lib.behaviors import repository
-from lib.http_utils import HttpUtils
 from repository import setup_database
 
 app = Flask(__name__)
@@ -76,31 +70,18 @@ if __name__ == "__main__":
     container = Container()
     app_config = container.app_config()
 
-    print(app_config.asdict())
     container.config.from_dict(app_config.asdict())
     container.wire(modules=[setup_database, sys.modules[__name__]])
 
     arguments = container.arguments()
 
-    # arguments = CliParser.parse_args()
-    # Configuration(arguments.config_file).validate_config()
-    # app_config = AppConfig(arguments.config_file)
-
-    def func_get_headers(): return (request.headers or dict())
-    http_utils = HttpUtils(func_get_headers)
-
     AppLogging.init(arguments.logging_level)
 
-    behavior_repository = repository.Repository(app_id=app_config.get_app_id())
-
-    #datastore = DataStore()
-    datastore = container.inventory_repository()
-
-    inventory = InventoryHandler(
-        app_config, datastore, http_utils, behavior_repository)
-    message = MessageHandler(app_config, http_utils, behavior_repository)
-    behaviors = BehaviorsHandler(app_config, behavior_repository)
-    index = IndexHandler(app_config, behavior_repository)
+    http_utils = container.http_utils()
+    inventory = container.inventory_handler()
+    message = container.message_handler()
+    behaviors = container.behaviors_handler()
+    index = container.index_handler()
 
     debug_mode = arguments.debug_mode
 
@@ -111,8 +92,7 @@ if __name__ == "__main__":
     AppLogging.info("Listening on port: " + str(port))
     AppLogging.info(index.get_message())
 
-    if app_config.get_app_config_value('database').get('database', None) != None:
-        # only setup database if value exists
+    if inventory_repository_selector() == 'database':
         setup_database.execute()
 
     app.run(use_debugger=True, use_reloader=False,

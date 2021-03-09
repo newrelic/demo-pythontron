@@ -1,9 +1,16 @@
 import json
 
 from dependency_injector import containers, providers
+from flask.globals import request
 
+from api.behaviors_handler import BehaviorsHandler
+from api.index_handler import IndexHandler
+from api.inventory_handler import InventoryHandler
+from api.message_handler import MessageHandler
 from lib.app_config import AppConfig
+from lib.behaviors.repository import Repository
 from lib.cli_parser import CliParser
+from lib.http_utils import HttpUtils
 from lib.validate.configuration import Configuration
 from repository.database_connection_info import DatabaseConnectionInfo
 from repository.database_inventory_repository import \
@@ -80,4 +87,41 @@ class Container(containers.DeclarativeContainer):
         inventory_repository_selector,
         file=file_inventory_repository,
         database=database_inventory_repository
+    )
+
+    http_utils = providers.Singleton(
+        HttpUtils,
+        func_get_headers=lambda: request.headers or dict()
+    )
+
+    behavior_repository = providers.Singleton(
+        Repository,
+        app_id=app_config.provided.get_app_id.call()
+    )
+    
+    inventory_handler = providers.Singleton(
+        InventoryHandler,
+        app_config=app_config,
+        datastore=inventory_repository,
+        https_utils=http_utils,
+        behavior_repository=behavior_repository
+    )
+    
+    message_handler = providers.Singleton(
+        MessageHandler,
+        app_config=app_config,
+        http_utils=http_utils,
+        behavior_repository=behavior_repository
+    )
+    
+    behaviors_handler = providers.Singleton(
+        BehaviorsHandler,
+        app_config=app_config,
+        behavior_repository=behavior_repository
+    )
+    
+    index_handler = providers.Singleton(
+        IndexHandler,
+        app_config=app_config,
+        behavior_repository=behavior_repository
     )

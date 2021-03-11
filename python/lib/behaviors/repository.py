@@ -1,4 +1,8 @@
-from . import throw_exception, compute, malloc
+from lib.behaviors.compute import Compute
+from lib.behaviors.invalid_query import InvalidQuery
+from lib.behaviors.malloc import Malloc
+from lib.behaviors.throw_exception import ThrowException
+
 
 class Repository(object):
   def __init__(
@@ -6,26 +10,31 @@ class Repository(object):
       available_behaviors = None,
       behavior_factory_func = None,
       behavior_lookup_func = lambda m, key: m[key] if key in m else None,
-      app_id = ""
+      app_id = "",
+      database_inventory_repository = None
     ):
     self.available_behaviors = available_behaviors if available_behaviors is not None else Repository.get_available_behaviors()
     self.behavior_factory_func = behavior_factory_func if behavior_factory_func is not None else Repository.factory
     self.behavior_lookup_func = behavior_lookup_func
     self.app_id = app_id
     self.behaviors_header_key = "X-DEMO"
+    self.database_inventory_repository = database_inventory_repository
 
   @staticmethod
   def get_available_behaviors():
+    #return ["THROW", "COMPUTE", "MALLOC", "INVALID-QUERY"]
     return ["THROW", "COMPUTE", "MALLOC"]
-
+  
   @staticmethod
   def factory(name, value):
     if name == "THROW":
-      return throw_exception.ThrowException()
+      return ThrowException()
     elif name == "COMPUTE":
-      return compute.Compute(value)
+      return Compute(value)
     elif name == "MALLOC":
-      return malloc.Malloc(value)
+      return Malloc(value)
+    elif name == "INVALID-QUERY":
+      return InvalidQuery()
     else:
       return None
 
@@ -45,12 +54,22 @@ class Repository(object):
 
     return behavior
 
-
   def lookup_and_create(self, key, name, headers):
-    value = self.behavior_lookup_func(headers, key)
+    value = headers.get(key, None)
     if value is None:
       return None
 
     return self.behavior_factory_func(name, value)
+    #return self.get_behavior(name, value)
 
-
+  def get_behavior(self, name, value):
+    if name == "THROW":
+      return ThrowException()
+    elif name == "COMPUTE":
+      return Compute(value)
+    elif name == "MALLOC":
+      return Malloc(value)
+    elif name == "INVALID-QUERY":
+      return InvalidQuery(self.database_inventory_repository)
+    else:
+      return None

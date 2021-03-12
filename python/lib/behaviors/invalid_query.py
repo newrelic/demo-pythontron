@@ -5,8 +5,8 @@ from . import behavior
 
 
 class InvalidQuery(behavior.Behavior):
-    def __init__(self, inventory_repository: DatabaseInventoryRepository):
-        super().__init__("INVALID-QUERY")
+    def __init__(self, inventory_repository: DatabaseInventoryRepository, value = None):
+        super().__init__("INVALID-QUERY", value)
         self.__inventory_repository = inventory_repository
 
 

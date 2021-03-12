@@ -59,8 +59,12 @@ class Repository(object):
     if value is None:
       return None
 
-    return self.behavior_factory_func(name, value)
+    #return self.behavior_factory_func(name, value)
     #return self.get_behavior(name, value)
+    
+    # lower().replace() is sanitizing the name so it can match a keyword argument
+    # example: INVALID-QUERY -> invalid_query
+    return self.behavior_factory_func(name.lower().replace('-', '_'), value=value)
 
   def get_behavior(self, name, value):
     if name == "THROW":

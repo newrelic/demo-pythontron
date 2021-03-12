@@ -17,6 +17,7 @@ For more information, see the [Behavior Documentation](https://github.com/newrel
 * Throw
 * Compute
 * Memory Allocation
+* Invalid Query
 
 
 ## Requirement

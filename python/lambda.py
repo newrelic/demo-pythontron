@@ -7,7 +7,11 @@ from api.message_handler import MessageHandler
 from data.inventory import get_inventory_data
 from lib.app_config import AppConfig
 from lib.app_logging import AppLogging
+from lib.behaviors.compute import Compute
+from lib.behaviors.invalid_query import InvalidQuery
+from lib.behaviors.malloc import Malloc
 from lib.behaviors.repository import Repository
+from lib.behaviors.throw_exception import ThrowException
 from lib.http_utils import HttpUtils
 from lib.tron_response import TronResponse
 from repository.database_connection_info import DatabaseConnectionInfo
@@ -63,8 +67,21 @@ def lambda_handler(event, context):
         func_get_headers=lambda: (event['headers'] or dict()).items()
     )
 
+    def behavior_factory(name, value):
+        if name == "throw":
+            return ThrowException()
+        elif name == "compute":
+            return Compute(value)
+        elif name == "malloc":
+            return Malloc(value)
+        elif name == "invalid_query":
+            return InvalidQuery(database_inventory_repository)
+        else:
+            return None
+
     behavior_repository = Repository(
-        app_id=app_config.get_app_id()
+        app_id=app_config.get_app_id(),
+        behavior_factory_func=behavior_factory
     )
     
     AppLogging.init('info')

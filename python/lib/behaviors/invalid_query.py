@@ -5,11 +5,10 @@ from . import behavior
 
 
 class InvalidQuery(behavior.Behavior):
-    def __init__(self, inventory_repository: DatabaseInventoryRepository, value = None):
+    def __init__(self, database_inventory_repository: DatabaseInventoryRepository, value=None):
         super().__init__("INVALID-QUERY", value)
-        self.__inventory_repository = inventory_repository
-
+        self.__database_inventory_repository = database_inventory_repository
 
     def execute(self):
-        super.execute()
-        self.__inventory_repository.run_invalid_query()
+        super().execute()
+        self.__database_inventory_repository.run_invalid_query()

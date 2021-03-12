@@ -24,7 +24,7 @@ class DatabaseInventoryRepository(IInventoryRepository):
             return items[0] if len(items) == 1 else None
         
     def run_invalid_query(self):
-        with self.__database_connector.connect() as cursor:
+        with self.__database_connector.connect().cursor() as cursor:
             query = ("SELECT * FROM inventry")
             cursor.execute(query)
             return [i for i in cursor]

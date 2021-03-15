@@ -7,7 +7,11 @@ from api.inventory_handler import InventoryHandler
 from api.message_handler import MessageHandler
 from data.inventory import get_inventory_data
 from lib.app_config import AppConfig
+from lib.behaviors.compute import Compute
+from lib.behaviors.invalid_query import InvalidQuery
+from lib.behaviors.malloc import Malloc
 from lib.behaviors.repository import Repository
+from lib.behaviors.throw_exception import ThrowException
 from lib.cli_parser import CliParser
 from lib.http_utils import HttpUtils
 from lib.validate.configuration import Configuration
@@ -83,10 +87,21 @@ class Container(containers.DeclarativeContainer):
         HttpUtils,
         func_get_headers=lambda: request.headers or dict()
     )
-
+    
+    behavior_factory = providers.FactoryAggregate(
+        throw=providers.Factory(ThrowException),
+        malloc=providers.Factory(Malloc),
+        compute=providers.Factory(Compute),
+        invalid_query=providers.Factory(
+            InvalidQuery, 
+            database_inventory_repository=database_inventory_repository
+        )
+    )
+        
     behavior_repository = providers.Singleton(
         Repository,
-        app_id=app_config.provided.get_app_id.call()
+        app_id=app_config.provided.get_app_id.call(),
+        behavior_factory_func=behavior_factory
     )
     
     inventory_handler = providers.Singleton(

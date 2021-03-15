@@ -1,36 +1,22 @@
-from . import throw_exception, compute, malloc
-
 class Repository(object):
   def __init__(
-      self, 
-      available_behaviors = None,
-      behavior_factory_func = None,
-      behavior_lookup_func = lambda m, key: m[key] if key in m else None,
-      app_id = ""
-    ):
+      self,
+      available_behaviors=None,
+      behavior_factory_func=None,
+      app_id=""
+  ):
     self.available_behaviors = available_behaviors if available_behaviors is not None else Repository.get_available_behaviors()
-    self.behavior_factory_func = behavior_factory_func if behavior_factory_func is not None else Repository.factory
-    self.behavior_lookup_func = behavior_lookup_func
+    self.behavior_factory_func = behavior_factory_func
     self.app_id = app_id
     self.behaviors_header_key = "X-DEMO"
 
   @staticmethod
   def get_available_behaviors():
-    return ["THROW", "COMPUTE", "MALLOC"]
-
-  @staticmethod
-  def factory(name, value):
-    if name == "THROW":
-      return throw_exception.ThrowException()
-    elif name == "COMPUTE":
-      return compute.Compute(value)
-    elif name == "MALLOC":
-      return malloc.Malloc(value)
-    else:
-      return None
+    return ["THROW", "COMPUTE", "MALLOC", "INVALID-QUERY"]
 
   def get_by_request(self, headers, step):
-    behaviors = map(lambda name: self.find_behaviors(name, headers, step), self.available_behaviors)
+    behaviors = map(lambda name: self.find_behaviors(
+        name, headers, step), self.available_behaviors)
     behaviors = filter(lambda b: b is not None, behaviors)
     return behaviors
 
@@ -45,12 +31,11 @@ class Repository(object):
 
     return behavior
 
-
   def lookup_and_create(self, key, name, headers):
-    value = self.behavior_lookup_func(headers, key)
+    value = headers.get(key, None)
     if value is None:
       return None
 
-    return self.behavior_factory_func(name, value)
-
-
+    # .lower().replace() is sanitizing the name so it can match a keyword argument
+    # example: INVALID-QUERY -> invalid_query
+    return self.behavior_factory_func(name.lower().replace('-', '_'), value=value)

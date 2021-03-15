@@ -1,9 +1,7 @@
 import unittest
-import json
 
-from mock import mock, mock_open, patch
-from lib.app_config import AppConfig
 from lib.behaviors import behavior, repository
+
 
 class BehaviorRepositoryTests(unittest.TestCase):
     def test_should_find_behavior_pre(self):
@@ -84,7 +82,7 @@ class BehaviorRepositoryTests(unittest.TestCase):
       self.assertEqual(found_behaviors[0].get_value(), 2)
 
 def createRepo(behaviors_arr = None):
-  factory = lambda n, v: behavior.Behavior("SOMETHING", v)
+  factory = lambda n, value: behavior.Behavior("SOMETHING", value)
   behaviors_arr = behaviors_arr if behaviors_arr is not None else ["SOMETHING"]
   return repository.Repository(behaviors_arr, factory, app_id="TEST")
 

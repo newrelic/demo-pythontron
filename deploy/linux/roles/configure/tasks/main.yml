@@ -16,5 +16,3 @@
   register: python3_path
 
 - include_tasks: service.yml
-
-- include_tasks: supervisord.yml

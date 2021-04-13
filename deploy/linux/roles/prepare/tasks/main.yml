@@ -34,6 +34,4 @@
   shell: which python3
   register: python3_path
 
-- include_tasks: installSupervisord.yml
-
 - include_tasks: configure_instance.yml

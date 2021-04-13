@@ -3,36 +3,14 @@
 - fail:
     msg: "service_id is required"
   when: service_id is not defined
-  
-- name: Get supervisorctl path
-  shell: which supervisorctl
-  register: supervisorctl_path
 
+- name: Get python3 path
+  shell: which python3
+  register: python3_path
 
-- name: supervisord add service
-  shell: '{{ supervisorctl_path.stdout }} add {{ service_id }}'
-  args:
-    chdir: /etc/supervisor/conf.d
-  become: true
-
-- name: supervisord start service
-  shell: '{{ supervisorctl_path.stdout }} start {{ service_id }}'
-  args:
-    chdir: /etc/supervisor/conf.d
-  become: true
-
-
-- name: supervisord add memmon{{ service_id }}
-  shell: '{{ supervisorctl_path.stdout }} add memmon{{ service_id }}'
-  args:
-    chdir: /etc/supervisor/conf.d
-  become: true
-
-- name: supervisord start memmon{{ service_id }}
-  shell: '{{ supervisorctl_path.stdout }} start memmon{{ service_id }}'
-  args:
-    chdir: /etc/supervisor/conf.d
-  become: true
-
+- name: start pythontron
+  shell:
+    cmd: nohup {{ python3_path.stdout }} /home/{{ ansible_user }}/{{ service_id }}/tron.py -c /home/{{ ansible_user }}/{{ service_id }}/config/app_config.json &
+    chdir: /home/{{ ansible_user }}/{{ service_id }}
 
 - include_tasks: cronjob.yml

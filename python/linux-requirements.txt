@@ -1,6 +1,6 @@
 # compute resource -- ec2, etc
 
-Flask==1.0.2
+Flask==2.0.3
 Flask-RESTful==0.3.7
 gunicorn==19.9.0
 mock==2.0.0

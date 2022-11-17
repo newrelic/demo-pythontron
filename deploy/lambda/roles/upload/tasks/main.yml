@@ -10,7 +10,7 @@
     path: "{{ deployment_path }}/{{ service_id }}/python"
     state: directory
 
-- synchronize:
+- ansible.posix.synchronize:
     src: "{{ role_path }}/../../../../python"
     dest: "{{ deployment_path }}/{{ service_id }}"
 

@@ -7,19 +7,23 @@
     flat: yes
 
 - name: Get existing lambda fact
-  lambda_facts:
+  community.aws.lambda_info:
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
     query: config
     function_name: "{{ lambda_function_name }}"
-  register: lambda_function_fact
+  register: lambda_function_details
   delegate_to: localhost
 
+- name: lambda_function_details
+  debug:
+    msg: "lambda_function_details:{{lambda_function_details}}"
+
 - set_fact:
-    environment_variables: "{{ (environment_variables|default({}))|combine(lambda_function_fact | json_query(query)) }}"
+    environment_variables: "{{ (environment_variables|default({}))|combine(lambda_function_details | json_query(query)) }}"
   vars:
-    query: "ansible_facts.lambda_facts.function.*.environment[].variables || `{}`"
+    query: "function.*.environment[].variables || `{}`"
 
 - name: create an uppercase key hashtable for all variable starting with new_relic
   set_fact:

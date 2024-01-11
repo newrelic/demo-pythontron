@@ -1,0 +1,13 @@
+{
+  "id": "tron1",
+  "port": 3001,
+  "delayStartMs": 10000,
+  "dependencies": [],
+  "database": {
+    "user": "",
+    "password": "",
+    "host": "",
+    "port": "",
+    "name": ""
+  }
+}
